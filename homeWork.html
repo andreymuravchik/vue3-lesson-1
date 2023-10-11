@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <style>
+    .container {
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 50px 0;
+    }
+
+    .results {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .task {
+      width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border: 1px solid black;
+    }
+
+    img {
+      width: 300px;
+      height: 150px;
+    }
+
+    button {
+      width: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="container">
+      <div class="task">
+        <h3>task 1</h3>
+        <label>
+          <input type="number" v-model="passenger" />
+        </label>
+
+        <div class="results">
+          <p>Кількість автобусів : {{ buses}}</p>
+
+
+          <p>Кількість води : {{ water}}</p>
+
+
+          <p>Кількість їжі : {{ food }}</p>
+
+        </div>
+      </div>
+
+      <div class="task">
+        <h3>task 2</h3>
+        <label>
+          <input type="number" v-model="monthNumber" />
+        </label>
+
+        <div class="results">
+
+          <p>{{seasonClothes}}</p>
+
+          <img :src="seasonImg" :alt="seasonClothes">
+
+        </div>
+      </div>
+
+      <div class="task">
+        <h3>task 3</h3>
+
+        <label>
+          min
+          <input type="number" v-model="min" />
+        </label>
+
+        <label>
+          max
+          <input type="number" v-model="max" />
+        </label>
+
+        <button @click="getRandomNumber">Generate</button>
+
+        <div class="results">
+
+          <p>{{randomNumber}}</p>
+
+        </div>
+      </div>
+
+      <div class="task">
+        <h3> task 4</h3>
+
+        <p>сумма на рахунку {{balance}} грн</p>
+
+        <label>
+          зарахувати на рахунок
+          <input type="number" v-model="deposit" />
+        </label>
+
+        <button @click="makeDeposit">зарахувати </button>
+
+        <label>
+          зняти з рахунку
+          <input type="number" v-model="withdraw" />
+        </label>
+
+        <button @click="makeWithdraw">зняти</button>
+        <p>відсотки за обслуговування {{bankPercent}}</p>
+
+
+        <div class="results">
+          <p>сумма в євро {{getEuros}} $</p>
+
+          <p>сумма в доларах {{getDollars}} €</p>
+        </div>
+      </div>
+
+      <div class="task">
+        <h3> task 5</h3>
+
+
+        <label>
+          login
+          <input type="text" v-model="currentUser.login" />
+        </label>
+
+        <label>
+          password
+          <input type="password" v-model="currentUser.password" />
+        </label>
+
+        <button @click="logIn">logIn</button>
+      </div>
+
+    </div>
+
+
+
+    <script>
+      const { createApp } = Vue;
+
+      const seasons = [
+        {
+          id: 1,
+          name: 'winter',
+          seasonMonths: 6,
+          clothes: 'coat',
+          seasonImg: 'https://media1.popsugar-assets.com/files/thumbor/d6kjK3E6_G9rEg3oT5NJeZ1gYBA=/fit-in/4608x2660/top/filters:format_auto():quality(85):upscale()/2020/01/07/726/n/1922441/419ff9b05e14b139162ef6.64727550_.jpg'
+        },
+        {
+          id: 2,
+          name: 'spring',
+          seasonMonths: 5,
+          clothes: 'shirt',
+          seasonImg: 'https://cdn.britannica.com/05/155405-050-F8969EE6/Spring-flowers-fruit-trees-bloom.jpg'
+        },
+        {
+          id: 3,
+          name: 'summer',
+          seasonMonths: 3,
+          clothes: 'shorts',
+          seasonImg: 'https://nikwax.files.wordpress.com/2013/08/endofsummer.jpg'
+        },
+        {
+          id: 4,
+          name: 'autumn',
+          seasonMonths: 2,
+          clothes: 'jeans',
+          seasonImg: 'https://hips.hearstapps.com/hmg-prod/images/fall-quotes-autumn-beauty-64a8879f6d38e.jpeg'
+        }
+      ]
+
+      const bankPercent = 3
+
+      const users = [
+        {
+          id: 1,
+          login: 'test1',
+          password: '1111',
+        },
+        {
+          id: 2,
+          login: 'test2',
+          password: '2222',
+        },
+        {
+          id: 3,
+          login: 'test3',
+          password: '3333',
+        }
+      ]
+      createApp({
+        data() {
+          return {
+            passenger: null,
+            monthNumber: null,
+            randomNumber: null,
+            min: null,
+            max: null,
+            deposit: null,
+            withdraw: null,
+            balance: 0,
+            dollarRate: 38,
+            euroRate: 41,
+            currentUser: {
+              password: '',
+              login: ''
+            }
+
+          };
+        },
+
+        computed: {
+          water() {
+            return this.passenger * 2
+          },
+
+          buses() {
+            return (Math.ceil(this.passenger / 20))
+          },
+
+          food() {
+            return this.passenger * 3
+          },
+
+          seasonClothes() {
+            switch (this.monthNumber) {
+              case 12:
+              case 1:
+              case 2: {
+                return seasons[0].clothes
+              }
+                break;
+              case 3:
+              case 4:
+              case 5:
+                {
+                  return seasons[1].clothes
+                }
+                break;
+              case 6:
+              case 7:
+              case 8: {
+                return seasons[2].clothes
+              }
+
+                break;
+              case 9:
+              case 10:
+              case 11:
+                {
+                  return seasons[3].clothes
+                }
+
+                break;
+            }
+
+            return 'введіть число від 1 до 12'
+          },
+
+          seasonImg() {
+            switch (this.monthNumber) {
+              case 12:
+              case 1:
+              case 2: {
+                return seasons[0].seasonImg
+              }
+                break;
+              case 3:
+              case 4:
+              case 5:
+                {
+                  return seasons[1].seasonImg
+                }
+                break;
+              case 6:
+              case 7:
+              case 8: {
+                return seasons[2].seasonImg
+              }
+
+                break;
+              case 9:
+              case 10:
+              case 11:
+                {
+                  return seasons[3].seasonImg
+                }
+                break;
+            }
+
+            return 'https://www.advantour.com/img/kazakhstan/images/nature.jpg'
+          },
+
+          getDollars() {
+            return (this.balance / this.dollarRate).toFixed(2)
+          },
+
+          getEuros() {
+            return (this.balance / this.euroRate).toFixed(2)
+          },
+
+          bankPercent() {
+            return (this.balance / 100 * bankPercent).toFixed(2)
+          },
+
+        },
+
+        methods: {
+          getRandomNumber() {
+            let min = Math.ceil(this.min);
+            let max = Math.floor(this.max);
+
+            this.randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+          },
+
+          makeDeposit() {
+            return this.balance += this.deposit
+          },
+
+          makeWithdraw() {
+            if (this.withdraw > this.balance) return alert("ви не можете зняти таку суму");
+
+            this.balance -= this.withdraw
+          },
+
+          logIn() {
+            if (users.find(items => items.password === this.currentUser.password && items.login === this.currentUser.login)) {
+              return alert('ви авторизовані')
+            }
+            return alert('пароль або логін не вірний')
+          }
+        }
+      }).mount("#app");
+    </script>
+</body>
+
+</html>
